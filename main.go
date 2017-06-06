@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -13,10 +12,9 @@ import (
 
 	authpb "github.com/iochti/auth-service/proto"
 	"github.com/iochti/gateway-service/handlers"
+	"github.com/iochti/gateway-service/helpers"
 	userpb "github.com/iochti/user-service/proto"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -26,14 +24,6 @@ type IochtiGateway struct {
 }
 
 var store sessions.Store
-
-func dieIf(err error) {
-	if err == nil {
-		return
-	}
-	fmt.Fprintf(os.Stderr, "Error: %s. Try --help for help.\n", err)
-	os.Exit(-1)
-}
 
 // extract router-specific headers to support dynamic routing & tracing
 func getContext(req *http.Request) context.Context {
@@ -61,38 +51,20 @@ func main() {
 	stateStoreSecret := flag.String("state-store-secret", "", "State store secret name")
 	flag.Parse()
 	if flag.NArg() != 0 {
-		dieIf(fmt.Errorf("expecting zero arguments but got %d", flag.NArg()))
+		helpers.DieIf(fmt.Errorf("expecting zero arguments but got %d", flag.NArg()))
 	}
 
 	if *stateStoreSecret == "" {
-		dieIf(fmt.Errorf("Expecting stateStoreSecret not to be empty, got %s", *stateStoreSecret))
+		helpers.DieIf(fmt.Errorf("Expecting stateStoreSecret not to be empty, got %s", *stateStoreSecret))
 	}
 
 	// -----------------------Auth service declaration------------------------------
-	var authCreds grpc.DialOption
-	if *caCertFile == "" {
-		authCreds = grpc.WithInsecure()
-	} else {
-		creds, err := credentials.NewClientTLSFromFile(*caCertFile, *authName)
-		dieIf(err)
-		authCreds = grpc.WithTransportCredentials(creds)
-	}
-	authConn, err := grpc.Dial(*authAddr, authCreds)
-	dieIf(err)
+	authConn := helpers.DeclareService(authAddr, caCertFile, authName)
 	defer authConn.Close()
 	authClient := authpb.NewAuthSvcClient(authConn)
 
 	// -----------------------User service declaration------------------------------
-	var userCreds grpc.DialOption
-	if *caCertFile == "" {
-		userCreds = grpc.WithInsecure()
-	} else {
-		creds, err := credentials.NewClientTLSFromFile(*caCertFile, *userName)
-		dieIf(err)
-		userCreds = grpc.WithTransportCredentials(creds)
-	}
-	userConn, err := grpc.Dial(*userAddr, userCreds)
-	dieIf(err)
+	userConn := helpers.DeclareService(userAddr, caCertFile, userName)
 	defer userConn.Close()
 	userClient := userpb.NewUserSvcClient(userConn)
 
