@@ -74,6 +74,7 @@ func main() {
 
 	authHandlers := handlers.AuthHandler{
 		AuthSvc: authClient,
+		UserSvc: userClient,
 		Store:   store,
 	}
 

@@ -3,17 +3,22 @@ package handlers
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/sessions"
 	pb "github.com/iochti/auth-service/proto"
 	"github.com/iochti/gateway-service/helpers"
+	usm "github.com/iochti/user-service/models"
+	userpb "github.com/iochti/user-service/proto"
 )
 
 // AuthHandler wrapper
 type AuthHandler struct {
 	AuthSvc pb.AuthSvcClient
+	UserSvc userpb.UserSvcClient
 	Store   sessions.Store
 }
 
@@ -44,6 +49,7 @@ func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Reque
 	w.Write([]byte(rsp.GetUrl()))
 }
 
+// HandleAuth handles GET:/auth request
 func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 	ctx := helpers.GetContext(r)
 	session, err := a.Store.Get(r, "state-session")
@@ -68,5 +74,37 @@ func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte(rsp.GetUser()))
+	ghubUser := usm.User{}
+	if err = json.Unmarshal(rsp.GetUser(), &ghubUser); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	ghubUser.ID = 0 // Unset ID because it corresponds to Github's user ID
+
+	// Try  to get the user in the database
+	userMsg, err := a.UserSvc.GetUser(ctx, &userpb.UserRequest{Categ: "login", Value: ghubUser.Login})
+
+	// If the user was not found
+	if err != nil && strings.Contains(err.Error(), "no rows in result set") {
+		var data []byte
+		data, err = ghubUser.ToByte()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		userMsg, err = a.UserSvc.CreateUser(ctx, &userpb.UserMessage{User: data})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte(userMsg.GetUser()))
 }
