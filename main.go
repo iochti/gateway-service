@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"strings"
@@ -48,14 +50,9 @@ func main() {
 	authName := flag.String("auth-name", "", "Common name of auth service")
 	userAddr := flag.String("user-addr", "localhost:5001", "Address of the user service")
 	userName := flag.String("user-name", "", "Common name of user service")
-	stateStoreSecret := flag.String("state-store-secret", "", "State store secret name")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		helpers.DieIf(fmt.Errorf("expecting zero arguments but got %d", flag.NArg()))
-	}
-
-	if *stateStoreSecret == "" {
-		helpers.DieIf(fmt.Errorf("Expecting stateStoreSecret not to be empty, got %s", *stateStoreSecret))
 	}
 
 	// -----------------------Auth service declaration------------------------------
@@ -70,7 +67,7 @@ func main() {
 
 	// Handlers creation
 	router := mux.NewRouter()
-	store = sessions.NewCookieStore([]byte(*stateStoreSecret))
+	store = sessions.NewCookieStore([]byte(RandToken(64)))
 
 	authHandlers := handlers.AuthHandler{
 		AuthSvc: authClient,
@@ -91,4 +88,11 @@ func main() {
 	n.UseHandler(router)
 
 	http.ListenAndServe(*addr, n)
+}
+
+// RandToken generates a random token of l length
+func RandToken(l int) string {
+	b := make([]byte, l)
+	rand.Read(b)
+	return base64.StdEncoding.EncodeToString(b)
 }

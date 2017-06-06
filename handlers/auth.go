@@ -32,27 +32,35 @@ func randToken() string {
 func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Request) {
 	ctx := helpers.GetContext(r)
 	state := randToken()
-
-	sessions, err := a.Store.Get(r, "state-session")
+	session, err := a.Store.Get(r, "state")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	sessions.Values["state"] = state
+	if session.Values["auth"] != nil {
+		userMsg, fetchErr := a.UserSvc.GetUser(ctx, &userpb.UserRequest{Categ: "login", Value: session.Values["auth"].(string)})
+		if fetchErr != nil {
+			http.Error(w, fetchErr.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Write([]byte(userMsg.GetUser()))
+		return
+	}
+	session.Values["state"] = state
 	rsp, err := a.AuthSvc.GetLoginURL(ctx, &pb.LoginURLRequest{State: state})
 	if err != nil {
 		fmt.Println("authsvc error :", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	sessions.Save(r, w)
+	session.Save(r, w)
 	w.Write([]byte(rsp.GetUrl()))
 }
 
 // HandleAuth handles GET:/auth request
 func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 	ctx := helpers.GetContext(r)
-	session, err := a.Store.Get(r, "state-session")
+	session, err := a.Store.Get(r, "state")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -106,5 +114,13 @@ func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	session.Values["auth"] = ghubUser.Login
+	session.Save(r, w)
 	w.Write([]byte(userMsg.GetUser()))
 }
