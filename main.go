@@ -13,6 +13,7 @@ import (
 
 	authpb "github.com/iochti/auth-service/proto"
 	"github.com/iochti/gateway-service/handlers"
+	userpb "github.com/iochti/user-service/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -21,6 +22,7 @@ import (
 
 type IochtiGateway struct {
 	authSvc authpb.AuthSvcClient
+	userSvc userpb.UserSvcClient
 }
 
 var store sessions.Store
@@ -54,6 +56,8 @@ func main() {
 	addr := flag.String("srv", ":3000", "TCP address to listen to (in host:port form)")
 	authAddr := flag.String("auth-addr", "localhost:5000", "Address of the auth service")
 	authName := flag.String("auth-name", "", "Common name of auth service")
+	userAddr := flag.String("user-addr", "localhost:5001", "Address of the user service")
+	userName := flag.String("user-name", "", "Common name of user service")
 	stateStoreSecret := flag.String("state-store-secret", "", "State store secret name")
 	flag.Parse()
 	if flag.NArg() != 0 {
@@ -64,6 +68,7 @@ func main() {
 		dieIf(fmt.Errorf("Expecting stateStoreSecret not to be empty, got %s", *stateStoreSecret))
 	}
 
+	// -----------------------Auth service declaration------------------------------
 	var authCreds grpc.DialOption
 	if *caCertFile == "" {
 		authCreds = grpc.WithInsecure()
@@ -77,14 +82,38 @@ func main() {
 	defer authConn.Close()
 	authClient := authpb.NewAuthSvcClient(authConn)
 
+	// -----------------------User service declaration------------------------------
+	var userCreds grpc.DialOption
+	if *caCertFile == "" {
+		userCreds = grpc.WithInsecure()
+	} else {
+		creds, err := credentials.NewClientTLSFromFile(*caCertFile, *userName)
+		dieIf(err)
+		userCreds = grpc.WithTransportCredentials(creds)
+	}
+	userConn, err := grpc.Dial(*userAddr, userCreds)
+	dieIf(err)
+	defer userConn.Close()
+	userClient := userpb.NewUserSvcClient(userConn)
+
+	// Handlers creation
 	router := mux.NewRouter()
 	store = sessions.NewCookieStore([]byte(*stateStoreSecret))
+
 	authHandlers := handlers.AuthHandler{
 		AuthSvc: authClient,
 		Store:   store,
 	}
+
+	userHandler := handlers.UserHandler{
+		UserSvc: userClient,
+	}
+
 	router.HandleFunc("/login", authHandlers.HandleLoginURLRequest).Methods("GET")
 	router.HandleFunc("/auth", authHandlers.HandleAuth).Methods("GET")
+	router.HandleFunc("/user", userHandler.HandleGetUser).Methods("GET")
+	router.HandleFunc("/user", userHandler.HandleCreateUser).Methods("POST")
+	router.HandleFunc("/user/{id}", userHandler.HandleDeleteUser).Methods("DELETE")
 	n := negroni.Classic()
 	n.UseHandler(router)
 
