@@ -50,6 +50,7 @@ func main() {
 	authName := flag.String("auth-name", "", "Common name of auth service")
 	userAddr := flag.String("user-addr", "localhost:5001", "Address of the user service")
 	userName := flag.String("user-name", "", "Common name of user service")
+	cst := flag.String("cookie-store-token", "", "Cookie store token (only for development environments)")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		helpers.DieIf(fmt.Errorf("expecting zero arguments but got %d", flag.NArg()))
@@ -67,7 +68,12 @@ func main() {
 
 	// Handlers creation
 	router := mux.NewRouter()
-	store = sessions.NewCookieStore([]byte(RandToken(64)))
+	var store *sessions.CookieStore
+	if *cst == "" {
+		store = sessions.NewCookieStore([]byte(RandToken(64)))
+	} else {
+		store = sessions.NewCookieStore([]byte(*cst))
+	}
 
 	authHandlers := handlers.AuthHandler{
 		AuthSvc: authClient,
