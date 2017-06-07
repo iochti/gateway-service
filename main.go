@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -16,8 +15,6 @@ import (
 	"github.com/iochti/gateway-service/handlers"
 	"github.com/iochti/gateway-service/helpers"
 	userpb "github.com/iochti/user-service/proto"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc/metadata"
 )
 
 type IochtiGateway struct {
@@ -26,22 +23,6 @@ type IochtiGateway struct {
 }
 
 var store sessions.Store
-
-// extract router-specific headers to support dynamic routing & tracing
-func getContext(req *http.Request) context.Context {
-	headers := make(map[string]string)
-	for k, values := range req.Header {
-		prefixed := func(s string) bool { return strings.HasPrefix(k, s) }
-		if prefixed("L5d-") || prefixed("Dtab-") || prefixed("X-Dtab-") {
-			if len(values) > 0 {
-				headers[k] = values[0]
-			}
-		}
-	}
-	md := metadata.New(headers)
-	ctx := metadata.NewContext(context.Background(), md)
-	return ctx
-}
 
 func main() {
 	caCertFile := flag.String("cacert", "", "path to PEM-encoded CA certificate")
