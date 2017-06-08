@@ -3,7 +3,7 @@
 	"GoVersion": "go1.8",
 	"GodepVersion": "v79",
 	"Packages": [
-		"./..."
+		"."
 	],
 	"Deps": [
 		{
@@ -12,6 +12,14 @@
 		},
 		{
 			"ImportPath": "github.com/golang/protobuf/ptypes/any",
+			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/ptypes/empty",
+			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/ptypes/timestamp",
 			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
 		},
 		{
@@ -37,6 +45,10 @@
 		{
 			"ImportPath": "github.com/iochti/auth-service/proto",
 			"Rev": "4e11e0b4d31ec01add9f75386cdfd4ca75ebfcc5"
+		},
+		{
+			"ImportPath": "github.com/iochti/thing-service/proto",
+			"Rev": "e0ee41ac87c6ea7c7a4800c9c9058be0677fd565"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/models",
