@@ -17,9 +17,10 @@ import (
 
 // AuthHandler wrapper
 type AuthHandler struct {
-	AuthSvc pb.AuthSvcClient
-	UserSvc userpb.UserSvcClient
-	Store   sessions.Store
+	AuthSvc     pb.AuthSvcClient
+	UserSvc     userpb.UserSvcClient
+	Store       sessions.Store
+	ContentType string
 }
 
 func randToken() string {
@@ -30,6 +31,7 @@ func randToken() string {
 
 // HandleLoginURLRequest returns the URL for the user to login
 func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", a.ContentType)
 	ctx := helpers.GetContext(r)
 	state := randToken()
 	session, err := a.Store.Get(r, "state")
@@ -59,6 +61,7 @@ func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Reque
 
 // HandleAuth handles GET:/auth request
 func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", a.ContentType)
 	ctx := helpers.GetContext(r)
 	session, err := a.Store.Get(r, "state")
 	if err != nil {

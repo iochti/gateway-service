@@ -14,15 +14,19 @@ import (
 	authpb "github.com/iochti/auth-service/proto"
 	"github.com/iochti/gateway-service/handlers"
 	"github.com/iochti/gateway-service/helpers"
+	thingpb "github.com/iochti/thing-service/proto"
 	userpb "github.com/iochti/user-service/proto"
 )
 
 type IochtiGateway struct {
-	authSvc authpb.AuthSvcClient
-	userSvc userpb.UserSvcClient
+	authSvc  authpb.AuthSvcClient
+	userSvc  userpb.UserSvcClient
+	thingSvc thingpb.ThingSvcClient
 }
 
 var store sessions.Store
+
+const CONTENT_TYPE = "application/json"
 
 func main() {
 	caCertFile := flag.String("cacert", "", "path to PEM-encoded CA certificate")
@@ -31,6 +35,8 @@ func main() {
 	authName := flag.String("auth-name", "", "Common name of auth service")
 	userAddr := flag.String("user-addr", "localhost:5001", "Address of the user service")
 	userName := flag.String("user-name", "", "Common name of user service")
+	thingAddr := flag.String("thing-addr", "localhost:5002", "Address of the thing service")
+	thingName := flag.String("thing-name", "", "Common name of thing service")
 	cst := flag.String("cookie-store-token", "", "Cookie store token (only for development environments)")
 	flag.Parse()
 	if flag.NArg() != 0 {
@@ -47,6 +53,11 @@ func main() {
 	defer userConn.Close()
 	userClient := userpb.NewUserSvcClient(userConn)
 
+	// -----------------------Thing service declaration------------------------------
+	thingConn := helpers.DeclareService(thingAddr, caCertFile, thingName)
+	defer thingConn.Close()
+	thingClient := thingpb.NewThingSvcClient(thingConn)
+
 	// Handlers creation
 	router := mux.NewRouter()
 	var store *sessions.CookieStore
@@ -57,13 +68,20 @@ func main() {
 	}
 
 	authHandlers := handlers.AuthHandler{
-		AuthSvc: authClient,
-		UserSvc: userClient,
-		Store:   store,
+		AuthSvc:     authClient,
+		UserSvc:     userClient,
+		Store:       store,
+		ContentType: CONTENT_TYPE,
 	}
 
 	userHandler := handlers.UserHandler{
-		UserSvc: userClient,
+		UserSvc:     userClient,
+		ContentType: CONTENT_TYPE,
+	}
+
+	thingHandler := handlers.ThingHandler{
+		ThingSvc:    thingClient,
+		ContentType: CONTENT_TYPE,
 	}
 
 	router.HandleFunc("/login", authHandlers.HandleLoginURLRequest).Methods("GET")
@@ -71,9 +89,13 @@ func main() {
 	router.HandleFunc("/user", userHandler.HandleGetUser).Methods("GET")
 	router.HandleFunc("/user", userHandler.HandleCreateUser).Methods("POST")
 	router.HandleFunc("/user/{id}", userHandler.HandleDeleteUser).Methods("DELETE")
+	router.HandleFunc("/thing/{id}", thingHandler.HandleGetThing).Methods("GET")
+	router.HandleFunc("/thing", thingHandler.HandleCreateThing).Methods("POST")
+	router.HandleFunc("/thing", thingHandler.HandleUpdateThing).Methods("PUT")
+	router.HandleFunc("/thing/one/{id}", thingHandler.HandleDeleteOneThing).Methods("DELETE")
+	router.HandleFunc("/thing/many", thingHandler.HandleDeleteManyThings).Methods("DELETE")
 	n := negroni.Classic()
 	n.UseHandler(router)
-
 	http.ListenAndServe(*addr, n)
 }
 
