@@ -71,14 +71,83 @@ func (t *ThingHandler) HandleCreateThing(w http.ResponseWriter, r *http.Request)
 // HandleUpdateThing handles thing update on PUT#/thing
 func (t *ThingHandler) HandleUpdateThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	ctx := helpers.GetContext(r)
+	user := new(tpb.Thing)
+	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	rsp, err := t.ThingSvc.UpdateThing(ctx, user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tb, err := json.Marshal(rsp)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(tb)
 }
 
 // HandleDeleteOneThing handles thing delete on DELETE#/thing/one/:id
 func (t *ThingHandler) HandleDeleteOneThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	ctx := helpers.GetContext(r)
+	vars := mux.Vars(r)
+
+	if vars["id"] == "" {
+		http.Error(w, "Error: missing id on DELETE", http.StatusBadRequest)
+		return
+	}
+	// Converts the string URL parameter to int ID
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "Error: bad id (not an int)", http.StatusBadRequest)
+		return
+	}
+	// Empty response
+	_, err = t.ThingSvc.DeleteThing(ctx, &tpb.ThingIDRequest{ID: int32(id)})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	deleteResponse := struct {
+		ID int32 `json:"id_deleted"`
+	}{int32(id)}
+	br, err := json.Marshal(deleteResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(br)
+}
+
+type deleteManyRequest struct {
+	Ids []int32 `json:"ids"`
 }
 
 // HandleDeleteManyThings handles thing bulk delete on DELETE#/thing/many
 func (t *ThingHandler) HandleDeleteManyThings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	ctx := helpers.GetContext(r)
+	rq := new(deleteManyRequest)
+	if err := json.NewDecoder(r.Body).Decode(rq); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if _, err := t.ThingSvc.BulkDeleteThing(ctx, &tpb.ThingIDArray{Things: rq.Ids}); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	deleteResponse := struct {
+		Ids []int32 `json:"ids_deleted"`
+	}{rq.Ids}
+	br, err := json.Marshal(deleteResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(br)
 }
