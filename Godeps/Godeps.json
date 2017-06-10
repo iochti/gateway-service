@@ -44,7 +44,7 @@
 		},
 		{
 			"ImportPath": "github.com/iochti/auth-service/proto",
-			"Rev": "16355c3b135037517942d59211cbd4a80ca8675d"
+			"Rev": "bb3d0f3b8d5fc6db727734b677870c9d6be575fe"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-group-service/proto",
@@ -56,11 +56,11 @@
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/models",
-			"Rev": "821763831cb8457b5b1eec008b665583b1ed6511"
+			"Rev": "e805f739cf34e912337933c3374412c7d1468169"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/proto",
-			"Rev": "821763831cb8457b5b1eec008b665583b1ed6511"
+			"Rev": "e805f739cf34e912337933c3374412c7d1468169"
 		},
 		{
 			"ImportPath": "github.com/namsral/flag",
