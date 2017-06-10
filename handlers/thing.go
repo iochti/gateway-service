@@ -50,12 +50,12 @@ func (t *ThingHandler) HandleGetThing(w http.ResponseWriter, r *http.Request) {
 func (t *ThingHandler) HandleCreateThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
 	ctx := helpers.GetContext(r)
-	var user tpb.Thing
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var thing tpb.Thing
+	if err := json.NewDecoder(r.Body).Decode(&thing); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rsp, err := t.ThingSvc.CreateThing(ctx, &user)
+	rsp, err := t.ThingSvc.CreateThing(ctx, &thing)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -72,12 +72,12 @@ func (t *ThingHandler) HandleCreateThing(w http.ResponseWriter, r *http.Request)
 func (t *ThingHandler) HandleUpdateThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
 	ctx := helpers.GetContext(r)
-	user := new(tpb.Thing)
-	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
+	thing := new(tpb.Thing)
+	if err := json.NewDecoder(r.Body).Decode(thing); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rsp, err := t.ThingSvc.UpdateThing(ctx, user)
+	rsp, err := t.ThingSvc.UpdateThing(ctx, thing)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

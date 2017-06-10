@@ -14,10 +14,12 @@ import (
 	authpb "github.com/iochti/auth-service/proto"
 	"github.com/iochti/gateway-service/handlers"
 	"github.com/iochti/gateway-service/helpers"
+	tgpb "github.com/iochti/thing-group-service/proto"
 	thingpb "github.com/iochti/thing-service/proto"
 	userpb "github.com/iochti/user-service/proto"
 )
 
+// IochtiGateway is the gateway service for iocthi platform infrastructure
 type IochtiGateway struct {
 	authSvc  authpb.AuthSvcClient
 	userSvc  userpb.UserSvcClient
@@ -37,6 +39,8 @@ func main() {
 	userName := flag.String("user-name", "", "Common name of user service")
 	thingAddr := flag.String("thing-addr", "localhost:5002", "Address of the thing service")
 	thingName := flag.String("thing-name", "", "Common name of thing service")
+	tgAddr := flag.String("tg-addr", "localhost:5003", "Address of the thing-group service")
+	tgName := flag.String("tg-name", "", "Common name of thing-group service")
 	cst := flag.String("cookie-store-token", "", "Cookie store token (only for development environments)")
 	flag.Parse()
 	if flag.NArg() != 0 {
@@ -58,6 +62,10 @@ func main() {
 	defer thingConn.Close()
 	thingClient := thingpb.NewThingSvcClient(thingConn)
 
+	// -----------------------Thing group service declaration------------------------------
+	thingGroupConn := helpers.DeclareService(tgAddr, caCertFile, tgName)
+	defer thingGroupConn.Close()
+	thingGroupClient := tgpb.NewThingGroupSvcClient(thingGroupConn)
 	// Handlers creation
 	router := mux.NewRouter()
 	var store *sessions.CookieStore
@@ -84,6 +92,11 @@ func main() {
 		ContentType: CONTENT_TYPE,
 	}
 
+	thingGroupHandler := handlers.ThingGroupHandler{
+		ThingGroupSvc: thingGroupClient,
+		ContentType:   CONTENT_TYPE,
+	}
+
 	router.HandleFunc("/login", authHandlers.HandleLoginURLRequest).Methods("GET")
 	router.HandleFunc("/auth", authHandlers.HandleAuth).Methods("GET")
 	router.HandleFunc("/user", userHandler.HandleGetUser).Methods("GET")
@@ -94,6 +107,10 @@ func main() {
 	router.HandleFunc("/thing", thingHandler.HandleUpdateThing).Methods("PUT")
 	router.HandleFunc("/thing/one/{id}", thingHandler.HandleDeleteOneThing).Methods("DELETE")
 	router.HandleFunc("/thing/many", thingHandler.HandleDeleteManyThings).Methods("DELETE")
+	router.HandleFunc("/group/{id}", thingGroupHandler.HandleGetGroup).Methods("GET")
+	router.HandleFunc("/group", thingGroupHandler.HandleCreateGroup).Methods("POST")
+	router.HandleFunc("/group", thingGroupHandler.HandleUpdateGroup).Methods("PUT")
+	router.HandleFunc("/group/{id}", thingGroupHandler.HandleDeleteGroup).Methods("DELETE")
 	n := negroni.Classic()
 	n.UseHandler(router)
 	http.ListenAndServe(*addr, n)

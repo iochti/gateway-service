@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 
 service ThingSvc {
   rpc GetThing(ThingIDRequest) returns (Thing) {}
+  rpc ListGroupThings(GroupRequest) returns (stream Thing) {}
   rpc CreateThing(Thing) returns (Thing) {}
   rpc UpdateThing(Thing) returns (Thing) {}
   rpc DeleteThing(ThingIDRequest) returns (google.protobuf.Empty) {}
@@ -19,12 +20,17 @@ message ThingIDArray {
 
 message Thing {
   int32 ID = 1;
-  string name = 2;
-  string description = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.Timestamp updated_at = 5;
+  int32 GroupID = 2;
+  string name = 3;
+  string MAC = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 message ThingIDRequest {
+  int32 ID = 1;
+}
+
+message GroupRequest {
   int32 ID = 1;
 }
