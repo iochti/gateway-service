@@ -55,8 +55,15 @@ func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	bytesResp, err := json.Marshal(struct {
+		ConnectionURL string `json:"connection_url"`
+	}{rsp.GetUrl()})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	session.Save(r, w)
-	w.Write([]byte(rsp.GetUrl()))
+	w.Write(bytesResp)
 }
 
 // HandleAuth handles GET:/auth request
