@@ -48,11 +48,11 @@
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-group-service/proto",
-			"Rev": "02256ece8adaa1e62cdbda6052cb02305a45fd50"
+			"Rev": "6df5d5fe300b2ee2e8506bc0530b0b72482f5ae4"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-service/proto",
-			"Rev": "fa28978808af054bcb150506a222a0cb07cfc650"
+			"Rev": "34eb0475b29d1009bbb33686e4cfcd8ac209e571"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/models",

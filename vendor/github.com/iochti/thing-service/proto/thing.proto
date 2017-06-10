@@ -20,7 +20,7 @@ message ThingIDArray {
 
 message Thing {
   int32 ID = 1;
-  int32 GroupID = 2;
+  int32 group_id = 2;
   string name = 3;
   string MAC = 4;
   google.protobuf.Timestamp created_at = 5;
