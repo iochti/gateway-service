@@ -51,16 +51,20 @@
 			"Rev": "8574fe6e3abd528d0656f7e8ef01c3fd15d4a715"
 		},
 		{
+			"ImportPath": "github.com/iochti/thing-service/models",
+			"Rev": "b81e9823471305e49b380e10b671f7dff5eeacbc"
+		},
+		{
 			"ImportPath": "github.com/iochti/thing-service/proto",
-			"Rev": "34eb0475b29d1009bbb33686e4cfcd8ac209e571"
+			"Rev": "b81e9823471305e49b380e10b671f7dff5eeacbc"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/models",
-			"Rev": "e805f739cf34e912337933c3374412c7d1468169"
+			"Rev": "8fc399868a3ae5829ec7ee7aa0d8db0f59c3b4ec"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/proto",
-			"Rev": "e805f739cf34e912337933c3374412c7d1468169"
+			"Rev": "8fc399868a3ae5829ec7ee7aa0d8db0f59c3b4ec"
 		},
 		{
 			"ImportPath": "github.com/namsral/flag",

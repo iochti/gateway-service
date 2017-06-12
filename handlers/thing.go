@@ -3,10 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/iochti/gateway-service/helpers"
+	"github.com/iochti/thing-service/models"
 	tpb "github.com/iochti/thing-service/proto"
 )
 
@@ -27,67 +27,59 @@ func (t *ThingHandler) HandleGetThing(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(w, "Bad ID parameter (not an number)", http.StatusBadRequest)
-		return
-	}
-
-	rsp, err := t.ThingSvc.GetThing(ctx, &tpb.ThingIDRequest{ID: int32(id)})
+	rsp, err := t.ThingSvc.GetThing(ctx, &tpb.ThingIDRequest{ID: vars["id"]})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	tb, err := json.Marshal(rsp)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Write(tb)
+	w.Write(rsp.GetItem())
 }
 
 //HandleCreateThing handles thing creation on POST:/thing
 func (t *ThingHandler) HandleCreateThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
 	ctx := helpers.GetContext(r)
-	var thing tpb.Thing
+	var thing models.Thing
 	if err := json.NewDecoder(r.Body).Decode(&thing); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rsp, err := t.ThingSvc.CreateThing(ctx, &thing)
+	bytes, err := json.Marshal(thing)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	rsp, err := t.ThingSvc.CreateThing(ctx, &tpb.Thing{Item: bytes})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	tb, err := json.Marshal(rsp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Write(tb)
+	w.Write(rsp.GetItem())
 }
 
 // HandleUpdateThing handles thing update on PUT#/thing
 func (t *ThingHandler) HandleUpdateThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
 	ctx := helpers.GetContext(r)
-	thing := new(tpb.Thing)
+	thing := new(models.Thing)
 	if err := json.NewDecoder(r.Body).Decode(thing); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rsp, err := t.ThingSvc.UpdateThing(ctx, thing)
+	bytes, err := json.Marshal(thing)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	rsp, err := t.ThingSvc.UpdateThing(ctx, &tpb.Thing{Item: bytes})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	tb, err := json.Marshal(rsp)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Write(tb)
+
+	w.Write(rsp.GetItem())
 }
 
 // HandleDeleteOneThing handles thing delete on DELETE#/thing/one/:id
@@ -100,21 +92,16 @@ func (t *ThingHandler) HandleDeleteOneThing(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Error: missing id on DELETE", http.StatusBadRequest)
 		return
 	}
-	// Converts the string URL parameter to int ID
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(w, "Error: bad id (not an int)", http.StatusBadRequest)
-		return
-	}
+
 	// Empty response
-	_, err = t.ThingSvc.DeleteThing(ctx, &tpb.ThingIDRequest{ID: int32(id)})
+	_, err := t.ThingSvc.DeleteThing(ctx, &tpb.ThingIDRequest{ID: vars["id"]})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	deleteResponse := struct {
-		ID int32 `json:"id_deleted"`
-	}{int32(id)}
+		ID string `json:"id_deleted"`
+	}{vars["id"]}
 	br, err := json.Marshal(deleteResponse)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -124,7 +111,7 @@ func (t *ThingHandler) HandleDeleteOneThing(w http.ResponseWriter, r *http.Reque
 }
 
 type deleteManyRequest struct {
-	Ids []int32 `json:"ids"`
+	Ids []string `json:"ids"`
 }
 
 // HandleDeleteManyThings handles thing bulk delete on DELETE#/thing/many
@@ -142,7 +129,7 @@ func (t *ThingHandler) HandleDeleteManyThings(w http.ResponseWriter, r *http.Req
 		return
 	}
 	deleteResponse := struct {
-		Ids []int32 `json:"ids_deleted"`
+		Ids []string `json:"ids_deleted"`
 	}{rq.Ids}
 	br, err := json.Marshal(deleteResponse)
 	if err != nil {

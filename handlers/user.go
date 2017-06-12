@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/iochti/gateway-service/helpers"
@@ -18,8 +17,8 @@ type UserHandler struct {
 }
 
 type deletionResponse struct {
-	ID      int  `json:"id"`
-	Deleted bool `json:"deleted"`
+	ID      string `json:"id"`
+	Deleted bool   `json:"deleted"`
 }
 
 // HandleGetUser is used on GET:/user and returns a user as JSON
@@ -75,18 +74,12 @@ func (u *UserHandler) HandleDeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idInt, err := strconv.Atoi(id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	rsp, err := u.UserSvc.DeleteUser(ctx, &pb.UserID{Id: int32(idInt)})
+	rsp, err := u.UserSvc.DeleteUser(ctx, &pb.UserID{Id: id})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	delResp := deletionResponse{ID: int(rsp.GetId()), Deleted: rsp.GetDeleted()}
+	delResp := deletionResponse{ID: rsp.GetId(), Deleted: rsp.GetDeleted()}
 	delRespBytes, err := json.Marshal(delResp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -97,7 +97,7 @@ func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	ghubUser.ID = 0 // Unset ID because it corresponds to Github's user ID
+	ghubUser.ID = "" // Unset ID because it corresponds to Github's user ID
 
 	// Try  to get the user in the database
 	userMsg, err := a.UserSvc.GetUser(ctx, &userpb.UserRequest{Categ: "login", Value: ghubUser.Login})

@@ -7,13 +7,13 @@ import (
 
 // User represents a platform user
 type User struct {
-	ID        int       `json:"id"`
-	Email     string    `json:"email"`
-	Login     string    `json:"login"`
-	AvatarURL string    `json:"avatar_url"`
-	Name      string    `json:"name"`
-	Created   time.Time `json:"created"`
-	Updated   time.Time `json:"updated"`
+	ID        string    `json:"id" bson:"id"`
+	Email     string    `json:"email" bson:"email"`
+	Login     string    `json:"login" bson:"login"`
+	AvatarURL string    `json:"avatar_url" bson:"avatarURL"`
+	Name      string    `json:"name" bson:"name"`
+	Created   time.Time `json:"created" bson:"created"`
+	Updated   time.Time `json:"updated" bson:"updated"`
 }
 
 // ToByte converts the user in a byte array

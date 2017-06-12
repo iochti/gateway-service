@@ -18,10 +18,10 @@ message UserMessage {
 }
 
 message UserID {
-  int32 id = 1;
+  string id = 1;
 }
 
 message UserDeleted {
   bool deleted = 1;
-  int32 id = 2;
+  string id = 2;
 }

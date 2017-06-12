@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package proto;
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service ThingSvc {
@@ -15,22 +14,17 @@ service ThingSvc {
 }
 
 message ThingIDArray {
-  repeated int32 things = 1;
+  repeated string things = 1;
 }
 
 message Thing {
-  int32 ID = 1;
-  int32 group_id = 2;
-  string name = 3;
-  string MAC = 4;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
+  bytes item = 1;
 }
 
 message ThingIDRequest {
-  int32 ID = 1;
+  string ID = 1;
 }
 
 message GroupRequest {
-  int32 ID = 1;
+  string ID = 1;
 }
