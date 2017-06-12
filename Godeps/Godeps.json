@@ -19,10 +19,6 @@
 			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
 		},
 		{
-			"ImportPath": "github.com/golang/protobuf/ptypes/timestamp",
-			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
-		},
-		{
 			"ImportPath": "github.com/gorilla/context",
 			"Comment": "v1.1-7-g08b5f42",
 			"Rev": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
@@ -47,24 +43,28 @@
 			"Rev": "bb3d0f3b8d5fc6db727734b677870c9d6be575fe"
 		},
 		{
+			"ImportPath": "github.com/iochti/thing-group-service/models",
+			"Rev": "a203421f5a66a12af1a1cc60b2c6df33f821cb09"
+		},
+		{
 			"ImportPath": "github.com/iochti/thing-group-service/proto",
-			"Rev": "8574fe6e3abd528d0656f7e8ef01c3fd15d4a715"
+			"Rev": "a203421f5a66a12af1a1cc60b2c6df33f821cb09"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-service/models",
-			"Rev": "b81e9823471305e49b380e10b671f7dff5eeacbc"
+			"Rev": "da320b99519c4c06aaea5df83c23ffaaeab8b614"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-service/proto",
-			"Rev": "b81e9823471305e49b380e10b671f7dff5eeacbc"
+			"Rev": "da320b99519c4c06aaea5df83c23ffaaeab8b614"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/models",
-			"Rev": "8fc399868a3ae5829ec7ee7aa0d8db0f59c3b4ec"
+			"Rev": "2043fcd23a208fa2eaabc7de37faaab96228d0f8"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/proto",
-			"Rev": "8fc399868a3ae5829ec7ee7aa0d8db0f59c3b4ec"
+			"Rev": "2043fcd23a208fa2eaabc7de37faaab96228d0f8"
 		},
 		{
 			"ImportPath": "github.com/namsral/flag",
@@ -193,6 +193,16 @@
 			"ImportPath": "google.golang.org/grpc/transport",
 			"Comment": "v1.2.0-129-g6fecf28",
 			"Rev": "6fecf2831adf75ce3b8b756d2d174db8a2044dbb"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2/bson",
+			"Comment": "r2016.08.01-5-g3f83fa5",
+			"Rev": "3f83fa5005286a7fe593b055f0d7771a7dce4655"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2/internal/json",
+			"Comment": "r2016.08.01-5-g3f83fa5",
+			"Rev": "3f83fa5005286a7fe593b055f0d7771a7dce4655"
 		}
 	]
 }

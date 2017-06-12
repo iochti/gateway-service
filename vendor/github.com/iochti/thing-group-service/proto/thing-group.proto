@@ -2,7 +2,6 @@ syntax = "proto3";
 package proto;
 
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 
 service ThingGroupSvc {
   rpc GetGroup(GroupIDRequest) returns (ThingGroup) {}
@@ -12,14 +11,9 @@ service ThingGroupSvc {
 }
 
 message ThingGroup {
-  int32 ID = 1;
-  int32 account_id = 2;
-  string name = 3;
-  string description = 4;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
+  bytes item = 1;
 }
 
 message GroupIDRequest {
-  int32 ID = 1;
+  string ID = 1;
 }
