@@ -5,6 +5,7 @@ import "google/protobuf/empty.proto";
 
 service ThingGroupSvc {
   rpc GetGroup(GroupIDRequest) returns (ThingGroup) {}
+  rpc ListUserGroups(UserIDRequest) returns (stream ThingGroup) {}
   rpc UpdateGroup(ThingGroup) returns (ThingGroup) {}
   rpc CreateGroup(ThingGroup) returns (ThingGroup) {}
   rpc DeleteGroup(GroupIDRequest) returns (google.protobuf.Empty) {}
@@ -16,4 +17,8 @@ message ThingGroup {
 
 message GroupIDRequest {
   string ID = 1;
+}
+
+message UserIDRequest {
+  string user_id = 1;
 }

@@ -111,6 +111,7 @@ func main() {
 	router.HandleFunc("/thing/many", thingHandler.HandleDeleteManyThings).Methods("DELETE")
 
 	router.HandleFunc("/group/{id}", thingGroupHandler.HandleGetGroup).Methods("GET")
+	router.HandleFunc("/group", thingGroupHandler.HandleListGroupsByUser).Methods("GET")
 	router.HandleFunc("/group", thingGroupHandler.HandleCreateGroup).Methods("POST")
 	router.HandleFunc("/group", thingGroupHandler.HandleUpdateGroup).Methods("PUT")
 	router.HandleFunc("/group/{id}", thingGroupHandler.HandleDeleteGroup).Methods("DELETE")

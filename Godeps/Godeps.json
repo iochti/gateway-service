@@ -45,19 +45,19 @@
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-group-service/models",
-			"Rev": "1e905f18c84c0de96ac4613d9ad6ca6d2dab7b99"
+			"Rev": "0848e9721d4519e95f1f2cc44323ee8bf8674579"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-group-service/proto",
-			"Rev": "1e905f18c84c0de96ac4613d9ad6ca6d2dab7b99"
+			"Rev": "0848e9721d4519e95f1f2cc44323ee8bf8674579"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-service/models",
-			"Rev": "7f76e7b1587614599c4ee3bba90d7e56e6c22128"
+			"Rev": "807f60aaa1144b9f2a0cbbde9d48cb42a0641dda"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-service/proto",
-			"Rev": "7f76e7b1587614599c4ee3bba90d7e56e6c22128"
+			"Rev": "807f60aaa1144b9f2a0cbbde9d48cb42a0641dda"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/models",
