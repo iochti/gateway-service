@@ -24,6 +24,7 @@ type deletionResponse struct {
 // HandleGetUser is used on GET:/user and returns a user as JSON
 func (u *UserHandler) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", u.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	params := r.URL.Query()
 	categ := params.Get("categ")
@@ -43,6 +44,7 @@ func (u *UserHandler) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 // HandleCreateUser is used on POST:/user and returns the created user as JSON
 func (u *UserHandler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", u.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	var user usm.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
@@ -65,6 +67,7 @@ func (u *UserHandler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 // HandleDeleteUser is used on DELETE:/user/:id and returns the deletion state & deleted id
 func (u *UserHandler) HandleDeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", u.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	vars := mux.Vars(r)
 	id := vars["id"]

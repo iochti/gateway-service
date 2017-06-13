@@ -19,6 +19,7 @@ type ThingGroupHandler struct {
 // HandleGetGroup handles GET#/group/:id and sends a group as JSON
 func (t *ThingGroupHandler) HandleGetGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	vars := mux.Vars(r)
 	rsp, err := t.ThingGroupSvc.GetGroup(ctx, &pb.GroupIDRequest{ID: vars["id"]})
@@ -32,6 +33,7 @@ func (t *ThingGroupHandler) HandleGetGroup(w http.ResponseWriter, r *http.Reques
 // HandleCreateGroup handles POST#/group and sends the created group as JSON
 func (t *ThingGroupHandler) HandleCreateGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	group := new(models.ThingGroup)
 	if err := json.NewDecoder(r.Body).Decode(group); err != nil {
@@ -54,6 +56,7 @@ func (t *ThingGroupHandler) HandleCreateGroup(w http.ResponseWriter, r *http.Req
 // HandleUpdateGroup handles PUT#/group and sends the updated group as JSON
 func (t *ThingGroupHandler) HandleUpdateGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	group := models.ThingGroup{}
 	if err := json.NewDecoder(r.Body).Decode(&group); err != nil {
@@ -76,6 +79,7 @@ func (t *ThingGroupHandler) HandleUpdateGroup(w http.ResponseWriter, r *http.Req
 // HandleDeleteGroup handles DELETE#/group and sends the deleted id as JSON
 func (t *ThingGroupHandler) HandleDeleteGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	vars := mux.Vars(r)
 	_, err := t.ThingGroupSvc.DeleteGroup(ctx, &pb.GroupIDRequest{ID: vars["id"]})

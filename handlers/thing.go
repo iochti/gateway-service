@@ -19,6 +19,7 @@ type ThingHandler struct {
 // HandleGetThing handles GET:/thing/:id requests
 func (t *ThingHandler) HandleGetThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	vars := mux.Vars(r)
 
@@ -38,6 +39,7 @@ func (t *ThingHandler) HandleGetThing(w http.ResponseWriter, r *http.Request) {
 //HandleCreateThing handles thing creation on POST:/thing
 func (t *ThingHandler) HandleCreateThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	var thing models.Thing
 	if err := json.NewDecoder(r.Body).Decode(&thing); err != nil {
@@ -63,6 +65,7 @@ func (t *ThingHandler) HandleCreateThing(w http.ResponseWriter, r *http.Request)
 // HandleUpdateThing handles thing update on PUT#/thing
 func (t *ThingHandler) HandleUpdateThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	thing := new(models.Thing)
 	if err := json.NewDecoder(r.Body).Decode(thing); err != nil {
@@ -85,6 +88,7 @@ func (t *ThingHandler) HandleUpdateThing(w http.ResponseWriter, r *http.Request)
 // HandleDeleteOneThing handles thing delete on DELETE#/thing/one/:id
 func (t *ThingHandler) HandleDeleteOneThing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	vars := mux.Vars(r)
 
@@ -117,6 +121,7 @@ type deleteManyRequest struct {
 // HandleDeleteManyThings handles thing bulk delete on DELETE#/thing/many
 func (t *ThingHandler) HandleDeleteManyThings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	rq := new(deleteManyRequest)
 	if err := json.NewDecoder(r.Body).Decode(rq); err != nil {

@@ -33,6 +33,7 @@ func randToken() string {
 // HandleLoginURLRequest returns the URL for the user to login
 func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", a.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	state := randToken()
 	session, err := a.Store.Get(r, "state")
@@ -70,6 +71,7 @@ func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Reque
 // HandleAuth handles GET:/auth request
 func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", a.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ctx := helpers.GetContext(r)
 	session, err := a.Store.Get(r, "state")
 	if err != nil {
