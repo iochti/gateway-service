@@ -9,7 +9,7 @@ import (
 // Thing represents a Db Thing element
 type Thing struct {
 	ID        bson.ObjectId `json:"id" bson:"_id"`
-	GroupID   string        `json:"group_id" bson:"groupID"`
+	GroupID   bson.ObjectId `json:"group_id" bson:"groupId"`
 	Name      string        `json:"name" bson:"name"`
 	MAC       string        `json:"mac" bson:"mac"`
 	CreatedAt time.Time     `json:"created_at" bson:"createdAt"`

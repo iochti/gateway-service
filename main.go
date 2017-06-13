@@ -102,11 +102,14 @@ func main() {
 	router.HandleFunc("/user", userHandler.HandleGetUser).Methods("GET")
 	router.HandleFunc("/user", userHandler.HandleCreateUser).Methods("POST")
 	router.HandleFunc("/user/{id}", userHandler.HandleDeleteUser).Methods("DELETE")
+
 	router.HandleFunc("/thing/{id}", thingHandler.HandleGetThing).Methods("GET")
+	router.HandleFunc("/thing", thingHandler.HandleListThings).Methods("GET")
 	router.HandleFunc("/thing", thingHandler.HandleCreateThing).Methods("POST")
 	router.HandleFunc("/thing", thingHandler.HandleUpdateThing).Methods("PUT")
 	router.HandleFunc("/thing/one/{id}", thingHandler.HandleDeleteOneThing).Methods("DELETE")
 	router.HandleFunc("/thing/many", thingHandler.HandleDeleteManyThings).Methods("DELETE")
+
 	router.HandleFunc("/group/{id}", thingGroupHandler.HandleGetGroup).Methods("GET")
 	router.HandleFunc("/group", thingGroupHandler.HandleCreateGroup).Methods("POST")
 	router.HandleFunc("/group", thingGroupHandler.HandleUpdateGroup).Methods("PUT")

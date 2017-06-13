@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -34,6 +35,44 @@ func (t *ThingHandler) HandleGetThing(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(rsp.GetItem())
+}
+
+// HandleListThings returns a list of things as JSON fetched from thing service
+func (t *ThingHandler) HandleListThings(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", t.ContentType)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	ctx := helpers.GetContext(r)
+	groupID := r.URL.Query().Get("groupid")
+	if groupID == "" {
+		http.Error(w, "Error missing groupid, try: URL?groupdid=MY_GROUP_ID", http.StatusBadRequest)
+	}
+	stream, err := t.ThingSvc.ListGroupThings(ctx, &tpb.GroupRequest{ID: groupID})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	streaming := true
+	fetched := []models.Thing{}
+	for streaming {
+		rsp, err := stream.Recv()
+		if err == io.EOF {
+			streaming = false
+		} else if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			streaming = false
+		} else {
+			temp := models.Thing{}
+			if err := json.Unmarshal(rsp.GetItem(), &temp); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				streaming = false
+			}
+			fetched = append(fetched, temp)
+		}
+	}
+	bytes, err := json.Marshal(fetched)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	w.Write(bytes)
 }
 
 //HandleCreateThing handles thing creation on POST:/thing
