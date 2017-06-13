@@ -2,9 +2,6 @@
 	"ImportPath": "github.com/iochti/gateway-service",
 	"GoVersion": "go1.8",
 	"GodepVersion": "v79",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/golang/protobuf/proto",
@@ -39,32 +36,36 @@
 			"Rev": "8b6b4cd75f07f7ee036eb37b8127bd40ab1efc49"
 		},
 		{
+			"ImportPath": "github.com/iochti/auth-service/models",
+			"Rev": "cf724facb65f7215a93e66e0e9eb0fd456e366fd"
+		},
+		{
 			"ImportPath": "github.com/iochti/auth-service/proto",
-			"Rev": "bb3d0f3b8d5fc6db727734b677870c9d6be575fe"
+			"Rev": "cf724facb65f7215a93e66e0e9eb0fd456e366fd"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-group-service/models",
-			"Rev": "a203421f5a66a12af1a1cc60b2c6df33f821cb09"
+			"Rev": "1e905f18c84c0de96ac4613d9ad6ca6d2dab7b99"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-group-service/proto",
-			"Rev": "a203421f5a66a12af1a1cc60b2c6df33f821cb09"
+			"Rev": "1e905f18c84c0de96ac4613d9ad6ca6d2dab7b99"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-service/models",
-			"Rev": "da320b99519c4c06aaea5df83c23ffaaeab8b614"
+			"Rev": "b981ee2f09637e465f32048da753b3625504313e"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-service/proto",
-			"Rev": "da320b99519c4c06aaea5df83c23ffaaeab8b614"
+			"Rev": "b981ee2f09637e465f32048da753b3625504313e"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/models",
-			"Rev": "2043fcd23a208fa2eaabc7de37faaab96228d0f8"
+			"Rev": "7893ca679bab9706de7b1f88f2e3b822c44557f4"
 		},
 		{
 			"ImportPath": "github.com/iochti/user-service/proto",
-			"Rev": "2043fcd23a208fa2eaabc7de37faaab96228d0f8"
+			"Rev": "7893ca679bab9706de7b1f88f2e3b822c44557f4"
 		},
 		{
 			"ImportPath": "github.com/namsral/flag",

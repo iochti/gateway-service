@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/sessions"
+	asm "github.com/iochti/auth-service/models"
 	pb "github.com/iochti/auth-service/proto"
 	"github.com/iochti/gateway-service/helpers"
 	usm "github.com/iochti/user-service/models"
@@ -92,20 +93,24 @@ func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	ghubUser := usm.User{}
+	ghubUser := asm.GhubUser{}
 	if err = json.Unmarshal(rsp.GetUser(), &ghubUser); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	ghubUser.ID = "" // Unset ID because it corresponds to Github's user ID
+	account := usm.User{}
+	account.Email = ghubUser.Email
+	account.Name = ghubUser.Name
+	account.AvatarURL = ghubUser.AvatarURL
+	account.Login = ghubUser.Login
 
-	// Try  to get the user in the database
+	// Try to get the user in the database
 	userMsg, err := a.UserSvc.GetUser(ctx, &userpb.UserRequest{Categ: "login", Value: ghubUser.Login})
 
 	// If the user was not found
-	if err != nil && strings.Contains(err.Error(), "no rows in result set") {
+	if err != nil && strings.Contains(err.Error(), "not found") {
 		var data []byte
-		data, err = ghubUser.ToByte()
+		data, err = account.ToByte()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
