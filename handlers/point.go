@@ -83,7 +83,7 @@ func (p *PointHandler) HandleGetFromThings(w http.ResponseWriter, r *http.Reques
 	w.Write(rsp.GetItem())
 }
 
-// HandleGetFromThings get datas from a thing
+// HandleGetFromGroup get datas from a group
 func (p *PointHandler) HandleGetFromGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", p.ContentType)
 	ctx := helpers.GetContext(r)
