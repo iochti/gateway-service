@@ -1,0 +1,64 @@
+syntax="proto3";
+
+package proto;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/any.proto";
+
+
+service PointSvc {
+  rpc CreatePoint(Point) returns (google.protobuf.Empty) {}
+  rpc GetPointsByThing(ThingId) returns (InfluxResult) {}
+  rpc GetPointsByGroup(GroupId) returns (InfluxResult) {}
+}
+
+message InfluxResult {
+  bytes item = 1;
+}
+
+message Point {
+  string user = 1;
+  map<string, string> tags = 2;
+  map<string, google.protobuf.Any> fields = 3;
+  google.protobuf.Timestamp dateCreation = 4;
+}
+
+message ThingId {
+  string user = 1;
+  string thingId = 2;
+  google.protobuf.Timestamp start = 3;
+  google.protobuf.Timestamp end = 4;
+}
+
+message GroupId {
+  string user = 1;
+  string groupId = 2;
+  google.protobuf.Timestamp start = 3;
+  google.protobuf.Timestamp end = 4;
+}
+
+message StringPoint {
+  string value = 1;
+}
+
+message FloatPoint {
+  float value = 1;
+}
+
+message IntegerPoint {
+  int32 value = 1;
+}
+
+message DurationPoint {
+  google.protobuf.Duration value = 1;
+}
+
+message DateTimePoint {
+  google.protobuf.Timestamp value = 1;
+}
+
+message BoolPoint {
+  bool value = 1;
+}

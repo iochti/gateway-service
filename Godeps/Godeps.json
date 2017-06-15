@@ -4,6 +4,11 @@
 	"GodepVersion": "v79",
 	"Deps": [
 		{
+			"ImportPath": "github.com/gogo/protobuf/proto",
+			"Comment": "v0.4-17-gefccd33",
+			"Rev": "efccd33a0c20aa078705571d5ddbfa14c8395a63"
+		},
+		{
 			"ImportPath": "github.com/golang/protobuf/proto",
 			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
 		},
@@ -12,7 +17,15 @@
 			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
 		},
 		{
+			"ImportPath": "github.com/golang/protobuf/ptypes/duration",
+			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
+		},
+		{
 			"ImportPath": "github.com/golang/protobuf/ptypes/empty",
+			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/ptypes/timestamp",
 			"Rev": "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
 		},
 		{
@@ -42,6 +55,10 @@
 		{
 			"ImportPath": "github.com/iochti/auth-service/proto",
 			"Rev": "cf724facb65f7215a93e66e0e9eb0fd456e366fd"
+		},
+		{
+			"ImportPath": "github.com/iochti/point-service/proto",
+			"Rev": "7c09e0efe809d665f8e5aafbb97f30160c54e4aa"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-group-service/models",

@@ -33,7 +33,8 @@ func randToken() string {
 // HandleLoginURLRequest returns the URL for the user to login
 func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", a.ContentType)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:4200")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	ctx := helpers.GetContext(r)
 	state := randToken()
 	session, err := a.Store.Get(r, "state")
@@ -64,14 +65,18 @@ func (a *AuthHandler) HandleLoginURLRequest(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	session.Save(r, w)
+	err = session.Save(r, w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 	w.Write(bytesResp)
 }
 
 // HandleAuth handles GET:/auth request
 func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", a.ContentType)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:4200")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	ctx := helpers.GetContext(r)
 	session, err := a.Store.Get(r, "state")
 	if err != nil {
@@ -79,19 +84,16 @@ func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	retrievedState := session.Values["state"]
-
 	// Get params
 	params := r.URL.Query()
 	state := params.Get("state")
 	code := params.Get("code")
 	if retrievedState != state {
-		fmt.Println(state, session.Values)
 		http.Error(w, fmt.Errorf("Expected response state to match stored state").Error(), http.StatusInternalServerError)
 		return
 	}
 	rsp, err := a.AuthSvc.HandleAuth(ctx, &pb.AuthRequest{State: state, Code: code})
 	if err != nil {
-		fmt.Println("authsvc error :", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -123,11 +125,6 @@ func (a *AuthHandler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
