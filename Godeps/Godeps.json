@@ -58,7 +58,7 @@
 		},
 		{
 			"ImportPath": "github.com/iochti/point-service/proto",
-			"Rev": "7c09e0efe809d665f8e5aafbb97f30160c54e4aa"
+			"Rev": "3c8460bff93a47ee051d8a7f1a679d62688b78fe"
 		},
 		{
 			"ImportPath": "github.com/iochti/thing-group-service/models",

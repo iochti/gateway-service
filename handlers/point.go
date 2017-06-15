@@ -101,7 +101,7 @@ func (p *PointHandler) HandleGetFromGroup(w http.ResponseWriter, r *http.Request
 	start := timestamp.Timestamp{Seconds: int64(startTime)}
 	end := timestamp.Timestamp{Seconds: int64(endTime)}
 
-	rsp, err := p.PointSvc.GetPointsByGroup(ctx, &pb.ThingId{Start: &start, End: &end, ThingId: params.Get("group_id"), User: params.Get("user")})
+	rsp, err := p.PointSvc.GetPointsByGroup(ctx, &pb.GroupId{Start: &start, End: &end, GroupId: params.Get("group_id"), User: params.Get("user")})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
